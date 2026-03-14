@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Foundry Fundamentals — Southern Cast Products</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1e2e;
+    --surface2: #232840;
+    --border: #2e3558;
+    --accent: #f6ad55;
+    --accent-dim: rgba(246,173,85,0.15);
+    --blue: #63b3ed;
+    --blue-dim: rgba(99,179,237,0.15);
+    --green: #68d391;
+    --green-dim: rgba(104,211,145,0.15);
+    --red: #fc8181;
+    --red-dim: rgba(252,129,129,0.15);
+    --text: #e2e8f0;
+    --text-muted: #8892a4;
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* ── Header ── */
+  header {
+    background: linear-gradient(135deg, #0d1127 0%, #1a1e2e 100%);
+    border-bottom: 2px solid var(--accent);
+    padding: 20px 24px 18px;
+    text-align: center;
+  }
+
+  .header-title {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--accent);
+    text-shadow: 0 0 30px rgba(246,173,85,0.4);
+  }
+
+  .header-sub {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin-top: 3px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .level-badge {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 4px 14px;
+    background: rgba(104,211,145,0.15);
+    border: 1px solid var(--green);
+    border-radius: 20px;
+    color: var(--green);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--border);
+    background: var(--surface);
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 14px 20px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+    position: relative;
+  }
+
+  .tab-btn.active {
+    color: var(--accent);
+  }
+
+  .tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  .tab-btn:hover:not(.active) {
+    color: var(--text);
+    background: rgba(255,255,255,0.03);
+  }
+
+  /* ── Content Panels ── */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── Study Guide ── */
+  .study-container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+  }
+
+  .study-intro {
+    background: var(--accent-dim);
+    border: 1px solid rgba(246,173,85,0.3);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 28px;
+    font-size: 0.9rem;
+    color: var(--accent);
+  }
+
+  .category {
+    margin-bottom: 36px;
+  }
+
+  .category-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cat-num {
+    width: 28px; height: 28px;
+    background: var(--accent);
+    color: #0f1117;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .cat-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .cat-subtitle {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-left: 4px;
+  }
+
+  .terms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 12px;
+  }
+
+  .term-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    transition: border-color 0.2s;
+  }
+
+  .term-card:hover {
+    border-color: var(--blue);
+  }
+
+  .term-name {
+    color: var(--blue);
+    font-weight: 700;
+    font-size: 0.97rem;
+    margin-bottom: 5px;
+  }
+
+  .term-def {
+    color: var(--text);
+    font-size: 0.875rem;
+    line-height: 1.55;
+  }
+
+  .term-tip {
+    margin-top: 7px;
+    padding-top: 7px;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--accent);
+    font-style: italic;
+  }
+
+  /* ── Quiz ── */
+  .quiz-container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+  }
+
+  /* Progress */
+  .progress-wrap {
+    margin-bottom: 24px;
+  }
+
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+  }
+
+  .progress-q-label {
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .progress-bar-track {
+    height: 6px;
+    background: var(--surface2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #ed8936);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+
+  /* Question card */
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+
+  .question-cat-tag {
+    display: inline-block;
+    padding: 2px 10px;
+    background: var(--blue-dim);
+    border: 1px solid rgba(99,179,237,0.3);
+    border-radius: 20px;
+    color: var(--blue);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .question-text {
+    font-size: 1.08rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* Options */
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .option-btn {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 13px 16px;
+    color: var(--text);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.18s;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  .option-letter {
+    width: 24px; height: 24px;
+    background: var(--border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    color: var(--text-muted);
+    transition: all 0.18s;
+  }
+
+  .option-btn:hover:not(:disabled) .option-letter {
+    background: var(--accent);
+    color: #0f1117;
+  }
+
+  .option-btn.correct {
+    border-color: var(--green);
+    background: var(--green-dim);
+  }
+
+  .option-btn.correct .option-letter {
+    background: var(--green);
+    color: #0f1117;
+  }
+
+  .option-btn.incorrect {
+    border-color: var(--red);
+    background: var(--red-dim);
+  }
+
+  .option-btn.incorrect .option-letter {
+    background: var(--red);
+    color: #0f1117;
+  }
+
+  .option-btn:disabled {
+    cursor: default;
+  }
+
+  /* Feedback */
+  .feedback-box {
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    display: none;
+  }
+
+  .feedback-box.correct {
+    background: var(--green-dim);
+    border: 1px solid rgba(104,211,145,0.35);
+    color: var(--green);
+    display: block;
+  }
+
+  .feedback-box.incorrect {
+    background: var(--red-dim);
+    border: 1px solid rgba(252,129,129,0.35);
+    color: var(--red);
+    display: block;
+  }
+
+  .feedback-icon {
+    font-size: 1rem;
+    margin-right: 6px;
+  }
+
+  .feedback-explain {
+    margin-top: 6px;
+    color: var(--text);
+    font-size: 0.84rem;
+  }
+
+  /* Next button */
+  .next-btn {
+    width: 100%;
+    padding: 13px;
+    background: var(--accent);
+    color: #0f1117;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    transition: opacity 0.2s;
+    display: none;
+  }
+
+  .next-btn:hover { opacity: 0.88; }
+
+  /* ── Results Screen ── */
+  .results-screen {
+    display: none;
+    text-align: center;
+  }
+
+  .results-screen.active {
+    display: block;
+  }
+
+  .results-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 36px 28px;
+    margin-bottom: 20px;
+  }
+
+  .results-title {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+
+  .score-ring {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 20px;
+    position: relative;
+  }
+
+  .score-ring svg { transform: rotate(-90deg); }
+
+  .score-pct {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .score-pct small {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .results-msg {
+    font-size: 1rem;
+    color: var(--text);
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+
+  .results-detail {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .results-btns {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .btn-retake {
+    flex: 1;
+    padding: 13px;
+    background: var(--accent);
+    color: #0f1117;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    min-width: 140px;
+  }
+
+  .btn-retake:hover { opacity: 0.88; }
+
+  .btn-study {
+    flex: 1;
+    padding: 13px;
+    background: none;
+    color: var(--text);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 140px;
+  }
+
+  .btn-study:hover {
+    border-color: var(--blue);
+    color: var(--blue);
+  }
+
+  /* Quiz intro */
+  .quiz-intro {
+    background: var(--accent-dim);
+    border: 1px solid rgba(246,173,85,0.3);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    font-size: 0.88rem;
+    color: var(--accent);
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .header-title { font-size: 1.55rem; }
+    .terms-grid { grid-template-columns: 1fr; }
+    .question-card { padding: 18px; }
+    .score-ring { width: 100px; height: 100px; }
+    .score-pct { font-size: 1.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── Header ─────────────────────────────────────────── -->
+<header>
+  <div class="header-title">⚙️ Foundry Fundamentals</div>
+  <div class="header-sub">Southern Cast Products &mdash; New Engineer Onboarding</div>
+  <div class="level-badge">🟢 Level 1 — Easy</div>
+</header>
+
+<!-- ─── Tabs ───────────────────────────────────────────── -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('study')">📖 Study Guide</button>
+  <button class="tab-btn" onclick="switchTab('quiz')">📝 Quiz</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     STUDY GUIDE PANEL
+══════════════════════════════════════════════════════════ -->
+<div id="study-panel" class="panel active">
+<div class="study-container">
+
+  <div class="study-intro">
+    <strong>How to use this guide:</strong> Read each term and definition carefully — the quiz questions pull directly from this material. Pay attention to the <em>tips</em> for context on why each term matters on the shop floor.
+  </div>
+
+  <!-- ── Category 1: The Mold ── -->
+  <div class="category">
+    <div class="category-header">
+      <div class="cat-num">1</div>
+      <div>
+        <span class="cat-title">The Mold — Cope &amp; Drag</span>
+        <span class="cat-subtitle">/ The container that shapes the casting</span>
+      </div>
+    </div>
+    <div class="terms-grid">
+
+      <div class="term-card">
+        <div class="term-name">Flask</div>
+        <div class="term-def">The rigid frame or box that holds the sand mold together during molding and pouring. It does not become part of the casting — it just contains the sand.</div>
+        <div class="term-tip">💡 Think of the flask as a picture frame: it holds everything in shape but isn't part of the picture.</div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-name">Cope</div>
+        <div class="term-def">The <strong>top half</strong> of the flask (and the sand mold inside it). "Cope" always refers to the upper portion.</div>
+        <div class="term-tip">💡 Memory trick: <em>C</em>ope = <em>C</em>eiling (top).</div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-name">Drag</div>
+        <div class="term-def">The <strong>bottom half</strong> of the flask (and the sand mold inside it). The drag sits on the molding floor and supports the cope on top of it.</div>
+        <div class="term-tip">💡 Memory trick: <em>D</em>rag = <em>D</em>own (bottom).</div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-name">Parting Line</div>
+        <div class="term-def">The flat (or contoured) surface where the cope and drag meet and separate. It divides the mold into its two halves and is a critical reference for pattern design.</div>
+        <div class="term-tip">💡 The parting line is the "seam" of the mold — you'll often see it as a faint line on the finished casting.</div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-name">Mold Cavity</div>
+        <div class="term-def">The hollow space inside the assembled mold (cope + drag) that is shaped exactly like the desired casting. Molten metal fills this cavity to form the part.</div>
+        <div class="term-tip">💡 The mold cavity is the "negative" of your finished part — the empty space that metal will occupy.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Category 2: Patterns ── -->
+  <div class="category">
+    <div class="category-header">
+      <div class="cat-num">2</div>
+      <div>
+        <span class="cat-title">Patterns</span>
+        <span class="cat-subtitle">/ The tool used to create the mold cavity</span>
+      </div>
+    </div>
+    <div class="terms-grid">
+
+      <div class="term-card">
+        <div class="term-name">Pattern</div>
+        <div class="term-def">A replica of the final casting — usually made from wood, plastic, or metal — that is pressed into sand to create the mold cavity. The pattern is removed before pouring.</div>
+        <div class="term-tip">💡 The pattern is like a cookie cutter: press it in, pull it out, and the shape remains in the sand.</div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-name">Draft</div>
+        <div class="term-def">A slight taper (angle) added to the vertical walls of a pattern so it can be withdrawn from the sand cleanly without breaking the mold. Measured in degrees.</div>
+        <div class="term-tip">💡 No draft = the pattern rips the sand when pulled out. Even 1–3° makes a huge difference.</div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-name">Shrinkage Allowance</div>
+        <div class="term-def">The amount added to a pattern's dimensions to compensate for the metal shrinking as it cools from liquid to solid. Patterns are intentionally made <em>larger</em> than the final part.</div>
+        <div class="term-tip">💡 Metal is like a sponge drying out — it shrinks. The pattern must be oversized to hit the right final dimensions.</div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-name">Core Print</div>
+        <div class="term-def">An extension on the pattern (and corresponding recess in the mold) that locates and supports a sand core inside the mold cavity. Core prints hold cores in position during pouring.</div>
+        <div class="term-tip">💡 Think of the core print as a "socket" — it's where the core plug sits to stay put.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Category 3: Cores ── -->
+  <div class="category">
+    <div class="category-header">
+      <div class="cat-num">3</div>
+      <div>
+        <span class="cat-title">Cores</span>
+        <span class="cat-subtitle">/ Creating internal cavities in the casting</span>
+      </div>
+    </div>
+    <div class="terms-grid">
+
+      <div class="term-card">
+        <div class="term-name">Core</div>
+        <div class="term-def">A preformed sand shape placed inside the mold cavity to create <strong>internal hollow sections</strong> — holes, passages, or recesses — in the finished casting that the pattern alone cannot form.</div>
+        <div class="term-tip">💡 If you want a pipe with a hollow center, a core is what creates that hollow space inside the casting.</div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-name">Core Box</div>
+        <div class="term-def">The tooling (like a mold for cores) used to form the sand core into the correct shape. Sand is packed into the core box, then the box is opened and the core is removed.</div>
+        <div class="term-tip">💡 The core box is to cores what the pattern is to the mold — it's the tool that shapes them.</div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-name">Core Coating</div>
+        <div class="term-def">A refractory (heat-resistant) liquid applied to the surface of a core before it is placed in the mold. It prevents the hot metal from penetrating the sand, improving the casting's surface finish.</div>
+        <div class="term-tip">💡 Core coating is like sunscreen for the sand core — it protects it from the extreme heat of molten metal.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Category 4: Gating System ── -->
+  <div class="category">
+    <div class="category-header">
+      <div class="cat-num">4</div>
+      <div>
+        <span class="cat-title">Gating System</span>
+        <span class="cat-subtitle">/ The channel network that delivers metal to the mold</span>
+      </div>
+    </div>
+    <div class="terms-grid">
+
+      <div class="term-card">
+        <div class="term-name">Sprue</div>
+        <div class="term-def">The <strong>vertical channel</strong> through which molten metal first enters the mold from the top. The sprue connects the pouring cup (where the ladle pours) down into the runner system.</div>
+        <div class="term-tip">💡 The sprue is the "downspout" — metal falls straight down through it to reach the horizontal channels below.</div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-name">Runner</div>
+        <div class="term-def">The <strong>horizontal channel</strong> at the parting line that distributes molten metal from the base of the sprue outward to one or more gates. Runners control flow speed and direction.</div>
+        <div class="term-tip">💡 Think of the runner as a hallway — metal runs horizontally through it to reach each doorway (gate) into the mold cavity.</div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-name">Gate / In-Gate</div>
+        <div class="term-def">The final opening where molten metal enters the mold cavity from the runner. The size and shape of the gate control the rate and direction of metal flow into the part.</div>
+        <div class="term-tip">💡 The gate is the last checkpoint before metal enters the actual casting shape — it's where flow is precisely controlled.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Category 5: Risers, Chills & Chaplets ── -->
+  <div class="category">
+    <div class="category-header">
+      <div class="cat-num">5</div>
+      <div>
+        <span class="cat-title">Risers, Chills &amp; Chaplets</span>
+        <span class="cat-subtitle">/ Controlling solidification and defects</span>
+      </div>
+    </div>
+    <div class="terms-grid">
+
+      <div class="term-card">
+        <div class="term-name">Riser / Feeder</div>
+        <div class="term-def">A reservoir of extra molten metal attached to the mold cavity. As the casting solidifies and shrinks, the riser feeds liquid metal into the casting to fill shrinkage voids and prevent internal defects.</div>
+        <div class="term-tip">💡 The riser is the casting's backup fuel tank — it donates metal to the part as it shrinks during cooling.</div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-name">Chill</div>
+        <div class="term-def">A metal insert (iron or steel) placed in the mold against the sand surface to rapidly extract heat from a specific area, causing that section of the casting to solidify faster than the surrounding metal.</div>
+        <div class="term-tip">💡 Chills are like ice packs on a sore spot — they cool one area quickly to control how the metal solidifies.</div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-name">Chaplet</div>
+        <div class="term-def">A small metal support piece placed inside the mold cavity to support a core that might sag or shift under the weight of the incoming molten metal. Chaplets become part of the casting.</div>
+        <div class="term-tip">💡 Chaplets are tiny metal stilts that hold the core in place — they fuse into the casting during pouring.</div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-name">Mold Coating / Wash</div>
+        <div class="term-def">A refractory liquid applied to the mold cavity surfaces before pouring. It creates a barrier between the molten metal and the sand, reducing sand burn-on and improving the casting's surface finish.</div>
+        <div class="term-tip">💡 Mold wash is like non-stick cooking spray for the mold — it keeps metal from sticking to the sand surface.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Category 6: Casting Process Terms ── -->
+  <div class="category">
+    <div class="category-header">
+      <div class="cat-num">6</div>
+      <div>
+        <span class="cat-title">Casting Process Terms</span>
+        <span class="cat-subtitle">/ Key concepts for understanding the process</span>
+      </div>
+    </div>
+    <div class="terms-grid">
+
+      <div class="term-card">
+        <div class="term-name">Green Sand</div>
+        <div class="term-def">The most common foundry molding sand — a mixture of silica sand, clay (bentonite), and water. "Green" does not refer to color; it means the sand is used in its <em>moist, unbaked</em> state.</div>
+        <div class="term-tip">💡 "Green" here means <em>uncured</em>, not the color. Most of Southern Cast's molds are made with green sand.</div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-name">Shrinkage</div>
+        <div class="term-def">The reduction in volume that occurs when molten metal transitions from liquid to solid as it cools. Shrinkage is predictable for each alloy and must be accounted for in pattern design.</div>
+        <div class="term-tip">💡 Every metal shrinks a specific amount — for example, gray iron shrinks about 1%, while steel can shrink 2–3%.</div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-name">Porosity</div>
+        <div class="term-def">Small voids, holes, or pores inside a casting caused by trapped gas or solidification shrinkage. Porosity weakens the casting and can cause leaks in pressure-tight applications.</div>
+        <div class="term-tip">💡 Porosity looks like Swiss cheese on the inside — it's a major quality defect that risers and proper venting help prevent.</div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-name">Solidification</div>
+        <div class="term-def">The process by which molten metal transitions from liquid to solid state as it loses heat inside the mold. Controlling solidification direction and rate is key to producing a sound, defect-free casting.</div>
+        <div class="term-tip">💡 Ideal solidification progresses from the thinnest sections toward the riser — pulling metal in to fill any shrinkage as it goes.</div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /study-container -->
+</div><!-- /study-panel -->
+
+
+<!-- ═══════════════════════════════════════════════════════
+     QUIZ PANEL
+══════════════════════════════════════════════════════════ -->
+<div id="quiz-panel" class="panel">
+<div class="quiz-container">
+
+  <div class="quiz-intro">
+    <strong>15 questions · 4 choices each</strong> — All answers can be found in the Study Guide. Take your time and read each question carefully.
+  </div>
+
+  <!-- Active question UI -->
+  <div id="quiz-active">
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span class="progress-q-label" id="q-counter">Question 1 of 15</span>
+        <span id="q-score-live">Score: 0</span>
+      </div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="question-card">
+      <div class="question-cat-tag" id="q-cat"></div>
+      <div class="question-text" id="q-text"></div>
+    </div>
+
+    <div class="options-list" id="options-list"></div>
+
+    <div class="feedback-box" id="feedback-box">
+      <span class="feedback-icon" id="feedback-icon"></span>
+      <strong id="feedback-headline"></strong>
+      <div class="feedback-explain" id="feedback-explain"></div>
+    </div>
+
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question →</button>
+  </div>
+
+  <!-- Results screen -->
+  <div id="results-screen" class="results-screen">
+    <div class="results-card">
+      <div class="results-title">Quiz Complete!</div>
+      <div class="score-ring">
+        <svg width="120" height="120" viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#2e3558" stroke-width="10"/>
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#f6ad55" stroke-width="10"
+            stroke-dasharray="314" stroke-dashoffset="314"
+            stroke-linecap="round"
+            id="score-circle"/>
+        </svg>
+        <div class="score-pct">
+          <span id="score-pct-num">0%</span>
+          <small id="score-fraction">0 / 15</small>
+        </div>
+      </div>
+      <div class="results-msg" id="results-msg"></div>
+      <div class="results-detail" id="results-detail"></div>
+    </div>
+    <div class="results-btns">
+      <button class="btn-retake" onclick="retakeQuiz()">🔄 Retake Quiz</button>
+      <button class="btn-study" onclick="switchTab('study')">📖 Back to Study Guide</button>
+    </div>
+  </div>
+
+</div><!-- /quiz-container -->
+</div><!-- /quiz-panel -->
+
+
+<script>
+// ─────────────────────────────────────────────────────────
+//  QUIZ DATA
+// ─────────────────────────────────────────────────────────
+const questions = [
+  // Category 1 — The Mold
+  {
+    cat: "The Mold — Cope & Drag",
+    q: "What is the name of the rigid frame or box that holds the sand mold together during molding and pouring?",
+    opts: ["Core Box", "Flask", "Cope", "Runner"],
+    answer: 1,
+    explain: "The Flask is the outer frame that contains the sand mold. The cope and drag are the two halves of the flask — the flask itself is the whole container."
+  },
+  {
+    cat: "The Mold — Cope & Drag",
+    q: "In a two-part sand mold, which half is the TOP portion?",
+    opts: ["Drag", "Runner", "Cope", "Parting Line"],
+    answer: 2,
+    explain: "Cope = top half. Drag = bottom half. A useful memory trick: 'C' for Cope, 'C' for Ceiling (top)."
+  },
+  {
+    cat: "The Mold — Cope & Drag",
+    q: "The flat surface where the cope and drag meet and separate is called the ___.",
+    opts: ["Mold Cavity", "Parting Line", "Sprue", "Draft Angle"],
+    answer: 1,
+    explain: "The Parting Line is the seam between the two mold halves. It's a critical reference for pattern makers because the pattern must split cleanly at this line."
+  },
+  {
+    cat: "The Mold — Cope & Drag",
+    q: "What is the term for the hollow space inside the assembled mold that molten metal fills to form the casting?",
+    opts: ["Runner", "Core Box", "Mold Cavity", "Riser"],
+    answer: 2,
+    explain: "The Mold Cavity is the negative impression of the desired part — the empty space shaped exactly like the final casting. Metal fills this space."
+  },
+
+  // Category 2 — Patterns
+  {
+    cat: "Patterns",
+    q: "A replica of the final casting used to create the mold cavity is called a ___.",
+    opts: ["Core", "Pattern", "Chaplet", "Chill"],
+    answer: 1,
+    explain: "The Pattern is pressed into sand to form the mold cavity, then removed before pouring. It is usually made of wood, plastic, or metal."
+  },
+  {
+    cat: "Patterns",
+    q: "Why is a slight taper (angle) added to the vertical walls of a pattern?",
+    opts: [
+      "To increase the size of the mold cavity",
+      "To allow the pattern to be withdrawn from the sand without damaging the mold",
+      "To speed up metal solidification",
+      "To support the core inside the mold"
+    ],
+    answer: 1,
+    explain: "This taper is called Draft. Without draft, the pattern would drag and tear the sand walls when lifted out, ruining the mold impression."
+  },
+  {
+    cat: "Patterns",
+    q: "Patterns are intentionally made slightly LARGER than the desired final part dimension. Why?",
+    opts: [
+      "To account for the weight of the molten metal",
+      "To make them easier to handle in the foundry",
+      "To compensate for metal shrinking as it cools (Shrinkage Allowance)",
+      "To leave room for core prints"
+    ],
+    answer: 2,
+    explain: "All metals shrink when they solidify. The Shrinkage Allowance is the extra size built into the pattern so the finished casting ends up at the correct dimensions after cooling."
+  },
+
+  // Category 3 — Cores
+  {
+    cat: "Cores",
+    q: "What foundry component is placed inside the mold cavity to create internal hollow sections — such as holes and passages — in the finished casting?",
+    opts: ["Chaplet", "Chill", "Core", "Riser"],
+    answer: 2,
+    explain: "A Core is a preformed sand shape that occupies space inside the mold so the casting has a hollow interior. For example, a core creates the hollow bore of a pipe casting."
+  },
+  {
+    cat: "Cores",
+    q: "The tooling used to shape a sand core — similar to how a pattern creates the mold — is called a ___.",
+    opts: ["Core Box", "Flask", "Core Print", "Core Coating"],
+    answer: 0,
+    explain: "The Core Box is the forming tool for cores. Sand is packed into the core box, and when the box is opened, the shaped core is removed and placed into the mold."
+  },
+
+  // Category 4 — Gating System
+  {
+    cat: "Gating System",
+    q: "Which part of the gating system is the VERTICAL channel through which molten metal first enters the mold from the pouring cup?",
+    opts: ["Runner", "Gate", "Sprue", "Riser"],
+    answer: 2,
+    explain: "The Sprue is the vertical downspout — metal falls straight down through it from the pouring cup to the runner system at the parting line."
+  },
+  {
+    cat: "Gating System",
+    q: "After metal flows down the sprue, it travels horizontally through the ___ before reaching the mold cavity.",
+    opts: ["Parting Line", "Riser", "Runner", "Core Print"],
+    answer: 2,
+    explain: "The Runner is the horizontal channel at the parting line that distributes metal from the base of the sprue outward to the gates. Think of it as the hallway connecting the sprue to the mold cavity."
+  },
+  {
+    cat: "Gating System",
+    q: "The final opening where molten metal passes from the runner into the mold cavity is called the ___.",
+    opts: ["Sprue", "Gate / In-Gate", "Parting Line", "Chaplet"],
+    answer: 1,
+    explain: "The Gate (or In-Gate) is the last controlled opening before metal enters the casting. Its size and shape determine the flow rate into the mold cavity."
+  },
+
+  // Category 5 — Risers, Chills & Chaplets
+  {
+    cat: "Risers, Chills & Chaplets",
+    q: "A reservoir of extra molten metal attached to the mold that feeds the casting as it solidifies is called a ___.",
+    opts: ["Core", "Chill", "Riser / Feeder", "Chaplet"],
+    answer: 2,
+    explain: "The Riser (or Feeder) acts as a backup tank of liquid metal. As the casting shrinks during solidification, the riser donates metal to fill those voids, preventing internal shrinkage defects."
+  },
+  {
+    cat: "Risers, Chills & Chaplets",
+    q: "A metal insert placed in the mold to rapidly extract heat from a specific area — causing that section to solidify faster — is called a ___.",
+    opts: ["Chaplet", "Chill", "Core Print", "Mold Wash"],
+    answer: 1,
+    explain: "Chills are metal inserts (iron or steel) that conduct heat away quickly. Foundry engineers use chills to control where solidification starts and direct it toward the riser."
+  },
+
+  // Category 6 — Casting Process Terms
+  {
+    cat: "Casting Process Terms",
+    q: "The most common foundry molding material — a moist mixture of silica sand, clay, and water — is called ___. Note: the name does NOT refer to its color.",
+    opts: ["Core Sand", "Green Sand", "Resin Sand", "Dry Sand"],
+    answer: 1,
+    explain: "Green Sand is called 'green' because it is used in an uncured (unbaked), moist state — not because of its color. It is the most widely used molding medium in the industry, including at Southern Cast Products."
+  }
+];
+
+// ─────────────────────────────────────────────────────────
+//  QUIZ STATE
+// ─────────────────────────────────────────────────────────
+let currentQ = 0;
+let score = 0;
+let answered = false;
+
+function startQuiz() {
+  currentQ = 0;
+  score = 0;
+  answered = false;
+  document.getElementById('quiz-active').style.display = 'block';
+  document.getElementById('results-screen').classList.remove('active');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[currentQ];
+  answered = false;
+
+  // Progress
+  document.getElementById('q-counter').textContent = `Question ${currentQ + 1} of ${questions.length}`;
+  document.getElementById('q-score-live').textContent = `Score: ${score}`;
+  const pct = (currentQ / questions.length) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+
+  // Category tag & question
+  document.getElementById('q-cat').textContent = q.cat;
+  document.getElementById('q-text').textContent = q.q;
+
+  // Options
+  const letters = ['A', 'B', 'C', 'D'];
+  const list = document.getElementById('options-list');
+  list.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.addEventListener('click', () => selectAnswer(i));
+    list.appendChild(btn);
+  });
+
+  // Reset feedback & next button
+  const fb = document.getElementById('feedback-box');
+  fb.className = 'feedback-box';
+  document.getElementById('next-btn').style.display = 'none';
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+
+  const q = questions[currentQ];
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach(b => b.disabled = true);
+
+  const isCorrect = idx === q.answer;
+  if (isCorrect) score++;
+
+  // Style buttons
+  btns[q.answer].classList.add('correct');
+  if (!isCorrect) btns[idx].classList.add('incorrect');
+
+  // Feedback
+  const fb = document.getElementById('feedback-box');
+  document.getElementById('q-score-live').textContent = `Score: ${score}`;
+
+  if (isCorrect) {
+    fb.className = 'feedback-box correct';
+    document.getElementById('feedback-icon').textContent = '✅';
+    document.getElementById('feedback-headline').textContent = 'Correct!';
+  } else {
+    const letters = ['A', 'B', 'C', 'D'];
+    fb.className = 'feedback-box incorrect';
+    document.getElementById('feedback-icon').textContent = '❌';
+    document.getElementById('feedback-headline').textContent = `Incorrect — the right answer was ${letters[q.answer]}: ${q.opts[q.answer]}`;
+  }
+  document.getElementById('feedback-explain').textContent = q.explain;
+
+  // Next button label
+  const nextBtn = document.getElementById('next-btn');
+  nextBtn.style.display = 'block';
+  nextBtn.textContent = currentQ < questions.length - 1 ? 'Next Question →' : 'See Results →';
+}
+
+function nextQuestion() {
+  currentQ++;
+  if (currentQ >= questions.length) {
+    showResults();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResults() {
+  document.getElementById('quiz-active').style.display = 'none';
+  const rs = document.getElementById('results-screen');
+  rs.classList.add('active');
+
+  const pct = Math.round((score / questions.length) * 100);
+  document.getElementById('score-pct-num').textContent = pct + '%';
+  document.getElementById('score-fraction').textContent = `${score} / ${questions.length}`;
+
+  // Animate ring
+  const circumference = 314;
+  const offset = circumference - (circumference * pct / 100);
+  document.getElementById('score-circle').style.strokeDashoffset = offset;
+
+  // Message
+  let msg, detail;
+  if (pct === 100) {
+    msg = "Perfect score — outstanding work! You've mastered Level 1 foundry terminology.";
+    detail = "You're ready to move on to Level 2 when it becomes available.";
+  } else if (pct >= 80) {
+    msg = "Great job! You have a solid grasp of foundry basics.";
+    detail = "Review the terms you missed in the Study Guide, then try again for a perfect score.";
+  } else if (pct >= 60) {
+    msg = "Good start! You're picking up the fundamentals.";
+    detail = "Spend some more time in the Study Guide — especially the categories that tripped you up — then retake the quiz.";
+  } else {
+    msg = "Keep at it — foundry terminology takes time to learn.";
+    detail = "We recommend re-reading the Study Guide carefully before retaking the quiz. Every expert started exactly where you are.";
+  }
+
+  document.getElementById('results-msg').textContent = msg;
+  document.getElementById('results-detail').textContent = detail;
+}
+
+function retakeQuiz() {
+  startQuiz();
+}
+
+// ─────────────────────────────────────────────────────────
+//  TAB SWITCHING
+// ─────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', (i === 0 && tab === 'study') || (i === 1 && tab === 'quiz'));
+  });
+  document.getElementById('study-panel').classList.toggle('active', tab === 'study');
+  document.getElementById('quiz-panel').classList.toggle('active', tab === 'quiz');
+
+  if (tab === 'quiz' && currentQ === 0 && !answered) {
+    startQuiz();
+  }
+}
+
+// ─────────────────────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────────────────────
+startQuiz();
+</script>
+</body>
+</html>
